@@ -1,0 +1,28 @@
+Name: Arduino Sumo Robot
+Date:30-05-2023
+Day: Tuesday
+
+-------------------------
+PWM Pins:
+
+Left H-Bridge
+Pin 5 --> Black wire
+Pin 6 --> White wire
+
+Right H-Bridge
+Pin 10 --> Purpule wire
+Pin 11 --> Gray wire
+
+-------------------------
+
+Digital Pins:
+
+Color Sensor Back
+Pin 2 --> Grey wire
+
+Color Sensor Front
+Pin 8 --> Yellow wire
+
+Pin 4 --> Left Infrared Sensor
+Pin 7 --> Center Infrared Sensor
+Pin 12 --> Right Infrared Sensor
