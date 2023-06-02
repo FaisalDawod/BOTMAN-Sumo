@@ -26,3 +26,5 @@ Pin 8 --> Yellow wire
 Pin 4 --> Left Infrared Sensor
 Pin 7 --> Center Infrared Sensor
 Pin 12 --> Right Infrared Sensor
+
+Pin 13 --> push button 
