@@ -1,5 +1,5 @@
 //Motors pins
-const int motorR[]={5,6},motorL[]={10,11};
+const int motorR[]={5,6},motorL[]={11,10};
 //IR sensors
 //0= they are seeing || 1=not seeing
 const int irL=4,irC=7,irR=12;
@@ -10,16 +10,18 @@ const int clrF=8,clrB=2;
 const int startButton=13;
 unsigned long buttonPressedTime = 0;
 //speed and 
-const int speedMax=230,speedHalf=110;
-char state='p';
+const int speedMax=220,speedHalf=120;
+char state='s';
 int speedCrnt=0;
 bool seeing=false;
-
-void forward(int s);
+void forW(int s, int t);
+void back(int s);
+void rL(int s);
+void forward(int s,int t);
 void notFound(int s);
-void backWord(int s);
-void rotateRight(int s);
-void rotateLeft(int s);
+void backword(int s);
+void rotateR(int s);
+void rotateL(int s);
 void stop();
 bool edgeDetected();
 char see();
@@ -39,171 +41,243 @@ void setup() {
 // motors are set to 0  for saftey 
   digitalWrite(motorR[0],0);
   digitalWrite(motorR[1],0);
-  digitalWrite(motorL[0],0);
   digitalWrite(motorL[1],0);
 // Waiting for the button to be pressed
-  while (digitalRead(buttonPin) == 1) {}
+  digitalWrite(motorL[0],0);
+  while (digitalRead(startButton) == 1) {}
 //waiting to release the button 
-  while (digitalRead(buttonPin) == 0) {}
+  while (digitalRead(startButton) == 0) {}
   buttonPressedTime = millis();
 // Wait for 5 seconds after button to start
   while (millis() - buttonPressedTime < 5000) {}
 
-  while(see()=='f'){
-   forward(speedMax);
-   delay(10);
-  }
-  imOnTheLine();
-  //test motors
-  //f(140);delay(3000);
-  //b(140);delay(3000);
-  //r(140);delay(3000);
-  //l(140);delay(3000);
-  //p();delay(5000);
+Serial.begin(9600);
 
-  while(speedCrnt<150&&(see()=='s')){
-  speedCrnt+=3;
-    analogWrite(motorR[0],0);
-    analogWrite(motorR[1],speedCrnt);
-    analogWrite(motorL[0],0);
-    analogWrite(motorL[1],0);
+   while(see()=='f'){
+    forward(speedMax,10);
     delay(10);
-    }
-    while(speedCrnt>0){
-  speedCrnt-=6;
-    analogWrite(motorR[0],0);
-    analogWrite(motorR[1],speedCrnt);
-    analogWrite(motorL[0],0);
-    analogWrite(motorL[1],0);
-    delay(8);
-    }
-    speedCrnt=0;
-    analogWrite(motorR[0],0);
-    analogWrite(motorR[1],0);
-    analogWrite(motorL[0],0);
-    analogWrite(motorL[1],0);
+   }
+//   imOnTheLine();
+//  //test motors
+////  forward(140,5);
+////  delay(1000);
+////  backward(140);
+////  delay(1000);
+////  rotateR(140);
+//  
+//  rotateL(140);
+//  
+//  stop(10);delay(1000);
+//
+////   while(speedCrnt<150&&(see()=='s')){
+////   speedCrnt+=3;
+////     analogWrite(motorR[0],0);
+////     analogWrite(motorR[1],speedCrnt);
+////     analogWrite(motorL[0],0);
+////     analogWrite(motorL[1],0);
+////     delay(10);
+////     }
+     stop(5);
 }
-void loop(){
- switch(see()){
-    case 'f':
-      forwad(maxSpeed,10);
-    break;
-    /////
-    case 'r':
-      rotateRight(speedHalf);
-    break;
-    /////
-    case 'l':
-      rotateLeft(speedHalf);
-    break;
-    /////
-    case 'n':
-      notFound(speedHalf);
-    break;
-    }
-  
-}
+ void loop(){
+
+//    Serial.print(digitalRead(clrF));
+//    Serial.print("l");
+//    Serial.println(digitalRead(clrB));
+  switch(see()){
+     case 'f':
+       forward(speedMax,7);
+     break;
+     /////
+     case 'r':
+       rotateR(speedHalf);
+     break;
+     /////
+     case 'l':
+       rotateL(speedHalf);
+     break;
+     /////
+     case 'n':
+       notFound(speedHalf);
+     break;
+     }
+
+ }
+
 // s for speed and t for time 
 void forward(int s,int t){
-  if(state!='f') p(); state='f';
+  if(state!='f') stop(5); state='f';
   
   for(speedCrnt;speedCrnt<s;speedCrnt+=2){
-    analogWrite(RM[1],speedCrnt);
-    analogWrite(RM[0],0);
-    analogWrite(LM[1],speedCrnt);
-    analogWrite(LM[0],0);
+    imOnTheLine();
+    analogWrite(motorR[1],speedCrnt);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],speedCrnt);
+    analogWrite(motorL[0],0);
     delay(t);
     }
       speedCrnt=s;
-    analogWrite(RM[1],s);
-    analogWrite(RM[0],0);
-    analogWrite(LM[1],s);
-    analogWrite(LM[0],0);
+    analogWrite(motorR[1],s);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],s);
+    analogWrite(motorL[0],0);
 }
-void b(int s){
-  if(state!='b') p(); state='b';
-  for(currentSpeed;currentSpeed<s;currentSpeed+=2){
-    analogWrite(RM[1],0);analogWrite(RM[0],currentSpeed);
-    analogWrite(LM[1],0);analogWrite(LM[0],currentSpeed);
-    delay(10);
+void forW(int s,int t){
+  if(state!='f') stop(10); state='f';
+  
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+    analogWrite(motorR[1],speedCrnt);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],speedCrnt);
+    analogWrite(motorL[0],0);
+    delay(t);
     }
-    analogWrite(RM[1],0);analogWrite(RM[0],s);
-    analogWrite(LM[1],0);analogWrite(LM[0],s);
+    speedCrnt=s;
+    analogWrite(motorR[1],s);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],s);
+    analogWrite(motorL[0],0);
+}
+void backward(int s){
+  if(state!='b') stop(10); state='b';
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+    imOnTheLine();
+    analogWrite(motorR[1],0);
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorL[1],0);
+    analogWrite(motorL[0],speedCrnt);
+    delay(7);
+    }
+    speedCrnt=s;
+    analogWrite(motorR[1],0);
+    analogWrite(motorR[0],s);
+    analogWrite(motorL[1],0);
+    analogWrite(motorL[0],s);
+}
+
+void back(int s){//backward for white color
+  if(state!='b') stop(5); state='b';
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+    analogWrite(motorR[1],0);
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorL[1],0);
+    analogWrite(motorL[0],speedCrnt);
+    delay(7);
+    }
+    speedCrnt=s;
+    analogWrite(motorR[1],0);
+    analogWrite(motorR[0],s);
+    analogWrite(motorL[1],0);
+    analogWrite(motorL[0],s);
+}
+void rotateR(int s){
+  if(state!='r')stop(10); state='r';
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+    if(see()=='r')return;
+    imOnTheLine();
+    analogWrite(motorR[0],0);
+    analogWrite(motorR[1],speedCrnt);
+    analogWrite(motorL[0],speedCrnt);
+    analogWrite(motorL[1],0);
+    delay(7);
+    }
+    speedCrnt=s;
+    analogWrite(motorR[0],0);
+    analogWrite(motorR[1],s);
+    analogWrite(motorL[0],s);
+    analogWrite(motorL[1],0);
+}
+void rotateL(int s){
+  if(state!='l') stop(10); state='l';
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+    if(see()=='l')return;
+    imOnTheLine();
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],speedCrnt);
+    delay(7);
+    }
+    speedCrnt=s;
+    analogWrite(motorR[0],s);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],s);
+}
+void rL(int s){// rL for color white
+  if(state!='l') 
+    stop(5); 
+  state='l';
+  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
+     if(see()!='l') return;
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],speedCrnt);
+    delay(5);
+    }
+    speedCrnt=s;
+    analogWrite(motorR[0],s);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],s);
 }
 void notFound(int s){
- rotateRight(s);
- stop(7);
- see();
- if(seeing==true)
- break;
- rotateLeft((s);
- see();
- if(seeing==true)
- break;
- stop(14);
+ rotateL(speedHalf);
+ while(see()=='n'){
+  imOnTheLine();
+ }
+ 
 }
 char see(){
-  if(!digitalRead(df)){seeing=true;return 'f';}
-  if(!digitalRead(dl)&&digitalRead(df)&&digitalRead(dr)){seeing=true;return 'l';}
-  if(digitalRead(dl)&&digitalRead(df)&&!digitalRead(dr)){seeing=true;return 'r';}
-  if(digitalRead(dl)&&digitalRead(df)&&digitalRead(dr)){seeing=false;return 'n';}
+  imOnTheLine();
+  if(!digitalRead(irC)){seeing=true;return 'f';}
+  if(!digitalRead(irL)&&digitalRead(irC)&&digitalRead(irR))
+  {
+    seeing=true;return 'l';
+    }
+  if(digitalRead(irL)&&digitalRead(irC)&&!digitalRead(irR))
+  {
+    seeing=true;return 'r';
+    }
+  if(digitalRead(irL)&&digitalRead(irC)&&digitalRead(irR))
+  {
+    seeing=false;return 'n';
+    }
 }
 void imOnTheLine(){
-  if(!clrF){
-     backWord(100);
-     RotateLeft(120);
-     p();}
-  
   if(!clrB){
-     forward(100);
-     rotateLeft(120);
-     p();
+    stop(5);
+    delay(2000);
+    
+//     forW(100,7);
+//     rL(120);
+//     
+//     stop(5);
   }
+  
+//  if(!clrF){
+//     back(100);
+//     rL(120);
+//     stop(5);
+//     }
 }
-void rotateRight(int s){
-  if(state!='r') p(); state='r';
-  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
-        if(see()!='r')return;
-    analogWrite(RM[0],0);
-    analogWrite(RM[1],speedCrnt);
-    analogWrite(LM[0],speedCrnt);
-    analogWrite(LM[1],0);
-    delay(10);
-    }
-    analogWrite(RM[0],0);
-    analogWrite(RM[1],s);
-    analogWrite(LM[0],s);
-    analogWrite(LM[1],0);
-}
-void RotateLeft(int s){
-  if(state!='l') p(); state='l';
-  for(speedCrnt;speedCrnt<s;speedCrnt+=2){
-        if(see()!='l')return;
-    analogWrite(RM[0],speedCrnt);
-    analogWrite(RM[1],0);
-    analogWrite(LM[0],0);
-    analogWrite(LM[1],speedCrnt);
-    delay(10);
-    }
-     // }
-    analogWrite(RM[0],s);
-    analogWrite(RM[1],0);
-    analogWrite(LM[0],0);
-    analogWrite(LM[1],s);
-}
+
 //t: stands for every time i need to do this procees in t time 
 void stop(int t){
+  
   switch(state){
-    case 'p':
+    case 's':
     break;
     ////
     case 'f':
-    while(speedCrnt > 6) {
+        while(speedCrnt > 6) {
     speedCrnt -= 3;
-    analogWrite(RM[1],speedCrnt);
-    analogWrite(RM[0],0);
-    analogWrite(LM[1],speedCrnt);
-    analogWrite(LM[0],0);
+    imOnTheLine();
+    analogWrite(motorR[1],speedCrnt);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],speedCrnt);
+    analogWrite(motorL[0],0);
     delay(t);
     }
     speedCrnt=0;
@@ -212,10 +286,11 @@ void stop(int t){
     case 'b':
     while(speedCrnt > 6) {
     speedCrnt -= 3;
-    analogWrite(RM[1],0);
-    analogWrite(RM[0],speedCrnt);
-    analogWrite(LM[1],0);
-    analogWrite(LM[0],speedCrnt);
+    imOnTheLine();
+    analogWrite(motorR[1],0);
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorL[1],0);
+    analogWrite(motorL[0],speedCrnt);
     delay(t);
     }
     speedCrnt=0;
@@ -224,27 +299,31 @@ void stop(int t){
     case 'l':
     while(speedCrnt > 6) {
     speedCrnt -= 3;
-    analogWrite(RM[0],speedCrnt);
-    analogWrite(RM[1],0);
-    analogWrite(LM[0],0);
-    analogWrite(LM[1],speedCrnt);
+    imOnTheLine();
+    analogWrite(motorR[0],speedCrnt);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],speedCrnt);
     delay(t);
     }
     speedCrnt=0;
     break;
     case 'r':
+    imOnTheLine();
     while(speedCrnt > 6) {
     speedCrnt -= 3;
-    analogWrite(RM[0],0);
-    analogWrite(RM[1],speedCrnt);
-    analogWrite(LM[0],speedCrnt);
-    analogWrite(LM[1],0);
+    analogWrite(motorR[0],0);
+    analogWrite(motorR[1],speedCrnt);
+    analogWrite(motorL[0],speedCrnt);
+    analogWrite(motorL[1],0);
     delay(t);
     }
     speedCrnt=0;
     break;
     }
-    state='p';
-    analogWrite(RM[0],0);analogWrite(RM[1],0);
-    analogWrite(LM[0],0);analogWrite(LM[1],0);
+    state='s';
+    analogWrite(motorR[0],0);
+    analogWrite(motorR[1],0);
+    analogWrite(motorL[0],0);
+    analogWrite(motorL[1],0);
 }
