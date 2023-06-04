@@ -246,7 +246,7 @@ char see(){
     }
 }
 void imOnTheLine(){
-  if(!clrB){
+  if(!digitalRead(clrB)){
     stop(5);
     delay(2000);
     
