@@ -5,7 +5,8 @@ const int motorR[]={5,6},motorL[]={11,10};
 const int irL=4,irC=7,irR=12;
 //color sensor
 // 0=white || 1=black
-const int clrF=8,clrB=2;
+// const int clrF=8,clrB=2; // We comment it because the clf yellow wire signal not work
+const int clrF = 2, clrB = 8;
 //start button
 const int startButton=13;
 unsigned long buttonPressedTime = 0;
