@@ -26,7 +26,7 @@ void rotateL(int s);
 void stop();
 bool edgeDetected();
 char see();
-void imOnTheLine();
+bool imOnTheLine();
 
 void setup() {
   pinMode(motorL[0],OUTPUT);
@@ -210,7 +210,6 @@ void rL(int s){// rL for color white
     stop(5); 
   state='l';
   for(speedCrnt;speedCrnt<s;speedCrnt+=2){
-     if(see()!='l') return;
     analogWrite(motorR[0],speedCrnt);
     analogWrite(motorR[1],0);
     analogWrite(motorL[0],0);
@@ -226,12 +225,11 @@ void rL(int s){// rL for color white
 void notFound(int s){
  rotateL(speedHalf);
  while(see()=='n'){
-  imOnTheLine();
+   if(imOnTheLine())
+    rotateL(speedHalf);
  }
- 
 }
 char see(){
-  imOnTheLine();
   if(!digitalRead(irC)){seeing=true;return 'f';}
   if(!digitalRead(irL)&&digitalRead(irC)&&digitalRead(irR))
   {
@@ -246,16 +244,18 @@ char see(){
     seeing=false;return 'n';
     }
 }
-void imOnTheLine(){
-  if(!digitalRead(clrB)){
-    stop(5);
-    delay(2000);
-    
+bool imOnTheLine(){
+  if(!digitalRead(clrF)){
+    back(150);
+    rL(150);
+    delay(200);
+    return true;
 //     forW(100,7);
 //     rL(120);
 //     
 //     stop(5);
   }
+  return false;
   
 //  if(!clrF){
 //     back(100);
@@ -274,7 +274,6 @@ void stop(int t){
     case 'f':
         while(speedCrnt > 6) {
     speedCrnt -= 3;
-    imOnTheLine();
     analogWrite(motorR[1],speedCrnt);
     analogWrite(motorR[0],0);
     analogWrite(motorL[1],speedCrnt);
@@ -287,7 +286,6 @@ void stop(int t){
     case 'b':
     while(speedCrnt > 6) {
     speedCrnt -= 3;
-    imOnTheLine();
     analogWrite(motorR[1],0);
     analogWrite(motorR[0],speedCrnt);
     analogWrite(motorL[1],0);
@@ -300,7 +298,6 @@ void stop(int t){
     case 'l':
     while(speedCrnt > 6) {
     speedCrnt -= 3;
-    imOnTheLine();
     analogWrite(motorR[0],speedCrnt);
     analogWrite(motorR[1],0);
     analogWrite(motorL[0],0);
@@ -310,7 +307,7 @@ void stop(int t){
     speedCrnt=0;
     break;
     case 'r':
-    imOnTheLine();
+    
     while(speedCrnt > 6) {
     speedCrnt -= 3;
     analogWrite(motorR[0],0);
