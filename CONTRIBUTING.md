@@ -22,4 +22,3 @@ This Update gonna be after problem in Sumo Competition (Sunday 04-06-2023)
 
 The Color Sensor Front not work, we thing the problem because damage from the 
 Signal yellow wire. 
------------------------------------------------------------------------------------------------------------------
