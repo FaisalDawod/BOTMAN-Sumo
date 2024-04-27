@@ -8,7 +8,7 @@ const int irL=4,irC=7,irR=12;
 // const int clrF=8,clrB=2; // We comment it because the clf yellow wire signal not work
 const int clrF = 2, clrB = 8;
 //start button
-const int startButton=13;
+const int startButton=9;
 unsigned long buttonPressedTime = 0;
 //speed and 
 const int speedMax=220,speedHalf=120;

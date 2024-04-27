@@ -5,25 +5,18 @@
   const int dl=4; const int df=7; const int dr=12;
   //(LOW= they are seeing, HIGH=not seeing)
 //Digital light Sensors
-  const int cl=2,cr=3;
+  const int cl=2,cr=3,cb=8;
   //(Low=white, HIGH=black)
-  const int buttonPin = 13;
+  const int buttonPin = 9;
 //vars
   unsigned long buttonPressedTime = 0;
-  const int maxSpeed=250;
-  int halfSpeed=80;
+  const int maxSpeed=180;
+  int halfSpeed=100;
   char state='p';
   int currentSpeed=0;
   bool seeing=false;
 // delay
-const int d=3;
-// Stop
-const int s=10;
-// firstSearchSF
-int fsf=0;
-int switcher=0;
-// Stop pp
-const int ss=10;
+const int d=7;
 //functions
 void f(int s);
 void sf(int s);
@@ -34,9 +27,10 @@ void p();
 bool lineDetected();
 char see();
 void imOnTheLine();
-bool str1=false;
-bool str2=false;
+void stopReverse();
+
 void setup() {
+  Serial.begin(9600);
   pinMode(RM[0],OUTPUT);
   pinMode(RM[1],OUTPUT);
   pinMode(LM[0],OUTPUT);
@@ -56,21 +50,10 @@ void setup() {
 // Wait for button press to start
   while (digitalRead(buttonPin) == HIGH) {
     // Wait for button press
-  
   }
-  while(digitalRead(buttonPin)==LOW){
-       if(digitalRead(dr)==0){
-         str1=true;
-      }else{
-        str1=false;
-        }   
-
-        if(digitalRead(dl)==0){
-         str2=true;
-      }else{
-        str2=false;
-        }  
-    }
+  while (digitalRead(buttonPin) == LOW) {
+    // Wait for button press
+  }
   buttonPressedTime = millis();
 
   // Wait for 5 seconds after button release before starting
@@ -78,26 +61,39 @@ void setup() {
     // Wait for 5 seconds
   }
 
-  if(str1){
-    l(100);
-  delay(5);
-  f(100);
-  delay(750);
-  r(120);
-  delay(200);
+  //attacking techniques just after the five seconds
+ // not allways well be implemented
+//  f(240);delay(100);l(240);delay(100);
+//  f(240);delay(100);r(240);delay(100);
+//  r(100);f(100);l(100);
+  //see();
+  
+  //test motors
+//  f(220);
+//  delay(7000);
+//  b(80);
+//  delay(2000);
+//  r(80);
+//  delay(2000);
+//  l(80);
+//  delay(2000);
+//  
   p();
-    }
-   if(str2){
-    r(100);
-  delay(5);
-  f(100);
-  delay(750);
-  l(120);
-  delay(200);
-  p();
-    
-    }
+  delay(2000);
+// 
+  
+  
 
+ 
+
+//  while(currentSpeed<150&&(see()=='s')){
+//  currentSpeed+=3;
+//    analogWrite(RM[0],0);
+//    analogWrite(RM[1],currentSpeed);
+//    analogWrite(LM[0],0);
+//    analogWrite(LM[1],0);
+//    delay(10);
+//    }
 
 // to check if the motors are stopped
 
@@ -138,13 +134,12 @@ void loop() {
     /////
     case 's':
       
-      sf(35);///////////finding the enemy
+      sf(38);///////////finding the enemy
     break;
     }
 }
 
 void f(int s){
-  fsf=0;
   if(state!='f') p(); state='f';
   
   for(currentSpeed;currentSpeed<s;currentSpeed+=2){
@@ -163,10 +158,20 @@ void f(int s){
 
   void sf(int s){
     if(state!='f') p(); state='f';
-    if(!seeing&&lineDetected()){
-      
-      imOnTheLine();}
-       f(s);
+    if(!seeing&&lineDetected()){imOnTheLine();}
+    for(currentSpeed;currentSpeed<s;currentSpeed+=2){
+     ///////////////////////////////////////////////////////////////////////////////
+    analogWrite(RM[1],currentSpeed);
+    analogWrite(RM[0],0);
+    analogWrite(LM[1],currentSpeed);
+    analogWrite(LM[0],0);
+    delay(d);
+    }
+    currentSpeed=s;
+    analogWrite(RM[1],s);
+    analogWrite(RM[0],0);
+    analogWrite(LM[1],s);
+    analogWrite(LM[0],0);
   }
 void b(int s){
   if(state!='b') p(); state='b';
@@ -216,7 +221,7 @@ void r(int s){
     analogWrite(LM[0],s);
     analogWrite(LM[1],0);
   }
- 
+
 void p(){
   switch(state){
     case 'p':
@@ -224,7 +229,7 @@ void p(){
     ////
     case 'f':
     while(currentSpeed > 6) {
-    currentSpeed -= s;
+    currentSpeed -= 3;
     analogWrite(RM[1],currentSpeed);
     analogWrite(RM[0],0);
     analogWrite(LM[1],currentSpeed);
@@ -236,7 +241,11 @@ void p(){
     ////
     case 'b':
     while(currentSpeed > 6) {/////////////////////////////////////////test
-    currentSpeed -= s;
+//    if(digitalRead(cb)==0){
+//       stopReverse();
+//      break;
+//      }
+    currentSpeed -= 3;
     analogWrite(RM[1],0);
     analogWrite(RM[0],currentSpeed);
     analogWrite(LM[1],0);
@@ -248,7 +257,7 @@ void p(){
     ////
     case 'l':
     while(currentSpeed > 6) {
-    currentSpeed -= s;
+    currentSpeed -= 3;
     analogWrite(RM[0],currentSpeed);
     analogWrite(RM[1],0);
     analogWrite(LM[0],0);
@@ -259,7 +268,7 @@ void p(){
     break;
     case 'r':
     while(currentSpeed > 6) {
-    currentSpeed -= s;
+    currentSpeed -= 3;
     analogWrite(RM[0],0);
     analogWrite(RM[1],currentSpeed);
     analogWrite(LM[0],currentSpeed);
@@ -283,7 +292,7 @@ void pp(){
     ////
     case 'f':
     while(currentSpeed > 12) {
-    currentSpeed -= ss;
+    currentSpeed -= 6;
     analogWrite(RM[1],currentSpeed);
     analogWrite(RM[0],0);
     analogWrite(LM[1],currentSpeed);
@@ -295,8 +304,11 @@ void pp(){
     ////
     case 'b':
     while(currentSpeed > 12) {/////////////////////////////////test
-
-    currentSpeed -= ss;
+//      if(digitalRead(cb)==0){
+//       stopReverse();
+//      break;
+//      }
+    currentSpeed -= 6;
     analogWrite(RM[1],0);
     analogWrite(RM[0],currentSpeed);
     analogWrite(LM[1],0);
@@ -308,7 +320,7 @@ void pp(){
     ////
     case 'l':
     while(currentSpeed > 12) {
-    currentSpeed -=ss;
+    currentSpeed -=6;
     analogWrite(RM[0],currentSpeed);
     analogWrite(RM[1],0);
     analogWrite(LM[0],0);
@@ -319,7 +331,7 @@ void pp(){
     break;
     case 'r':
     while(currentSpeed > 12) {
-    currentSpeed -= ss;
+    currentSpeed -= 6;
     analogWrite(RM[0],0);
     analogWrite(RM[1],currentSpeed);
     analogWrite(LM[0],currentSpeed);
@@ -366,7 +378,7 @@ void pp(){
 
 
   bool lineDetected(){////////////////////////////////////////////////////////////////this is to test in Rami's house 
-    if(!digitalRead(cl)||!digitalRead(cr)){
+    if(!digitalRead(cl)||!digitalRead(cr)||!digitalRead(cb)){
       return true;
       }
       else return false;
@@ -374,7 +386,14 @@ void pp(){
 
 
 
-
+    
+  void stopReverse(){
+    if(see()=='f'){
+      f(maxSpeed);
+    }else{
+      f(halfSpeed);
+    }
+  }
 
 
 
@@ -392,22 +411,36 @@ void pp(){
 
   void imOnTheLine(){ ////////////////////////////////////////////////////////////////this is to test in Rami's house 
     pp();
-    if(!digitalRead(cl)&& digitalRead(cr)){  
+
+    if(!digitalRead(cb)){
+      if(see()=='f'){
+      f(maxSpeed);
+      delay(1500);
+      p();
+      }
+      f(100);
+      delay(250);
+      p();
+      }
     
-    l(100);
-    delay(60);
+    if(!digitalRead(cl)&& digitalRead(cr)){  
+    b(100);
+    delay(250);
+    l(80);
+    delay(70);
     p();}
     
     if(digitalRead(cl)&& !digitalRead(cr)){
-    
-    r(100);
-    delay(60);
+    b(100);
+    delay(250);
+    r(80);
+    delay(70);
     p();}
 
     if(!digitalRead(cl)&& !digitalRead(cr)){
     r(80);
     delay(70);  
-    b(80);
+    b(100);
     delay(500);
     p();
     }
