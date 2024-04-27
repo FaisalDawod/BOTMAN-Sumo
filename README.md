@@ -1,6 +1,6 @@
 # BotMan: Redefining Sumo Robotics
 
-Introducing Bot Man, a formidable sumo robot meticulously crafted for a distinguished segment within the realm of software engineering, poised to make its mark in the illustrious arena of the National Sumo Robot Championship.
+Introducing BotMan, a formidable sumo robot meticulously crafted for a distinguished segment within the realm of software engineering, poised to make its mark in the illustrious arena of the National Sumo Robot Championship.
 
 Harnessing the collective acumen of software engineering disciples, we have seamlessly amalgamated our knowledge to sculpt strategies both intricate and robust, employing a harmonious blend of software finesse and hardware prowess. Our journey has been punctuated by a deep dive into the intricacies of the Arduino board, acquainting ourselves with its manifold variants.
 
