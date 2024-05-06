@@ -18,4 +18,9 @@ The rear-wheel propulsion, harnessed for optimal traction, lays the foundation o
 
 Looking ahead, our ambitions soar as we set our sights on the evolution of both Bot Man and its software, propelled by an unyielding commitment to innovation and excellence.
 
+## Contributors
+[Rami Abu Kishk](https://github.com/Sherlock-holmes1029)
+[Omar Assad](https://github.com/OmarA01)
+[Faisal Dawod](https://github.com/FaisalDawod)
+
 *Copyright 2022-2023*
